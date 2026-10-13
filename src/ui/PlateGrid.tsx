@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef } from "react";
-import type { CSSProperties, KeyboardEvent, PointerEvent } from "react";
+import type { CSSProperties, KeyboardEvent, PointerEvent, Ref } from "react";
 
 import type { PlateFormat, Well } from "../plate/plate";
 import { columnLabel, rowLabel, wellIndex, wellName } from "../plate/plate";
@@ -8,7 +8,9 @@ import { move, pick, pickColumn, pickRow, selectAll, selectedMask } from "../pla
 
 // The plate as a grid, selected like a spreadsheet: click, drag, Shift-click, Ctrl/Cmd-click, the row letters and
 // column numbers, the corner, the arrow keys (Shift extends, Ctrl/Cmd jumps to the edge), Ctrl/Cmd+A. The rules are in
-// plate/selection.ts; this file only turns pointer and key events into them.
+// plate/selection.ts; this file only turns pointer and key events into them. Each well shows the colour of its value
+// in the current layer. A printable key starts typing (handed to the entry bar), Enter, F2 or a double-click edits the
+// active well's value, Delete or Backspace clears the selected wells.
 
 type Update = (next: (s: Selection) => Selection) => void;
 
@@ -30,7 +32,20 @@ function targetAt(x: number, y: number): { row?: number; column?: number } | nul
   return { row: n(el.dataset.row), column: n(el.dataset.column) };
 }
 
-export function PlateGrid({ format, selection, onSelect }: { format: PlateFormat; selection: Selection; onSelect: Update }) {
+interface Props {
+  ref?: Ref<HTMLDivElement>;
+  format: PlateFormat;
+  selection: Selection;
+  onSelect: Update;
+  colors: (string | undefined)[]; // one per well, row by row
+  titles: string[]; // one per well: its name and its value in every layer
+  dimmed?: (index: number) => boolean; // wells set back while a legend value is lit
+  onType: (text: string) => void;
+  onEdit: () => void;
+  onClear: () => void;
+}
+
+export function PlateGrid({ ref, format, selection, onSelect, colors, titles, dimmed, onType, onEdit, onClear }: Props) {
   const drag = useRef<Drag>(null);
   const mask = useMemo(() => selectedMask(format, selection), [format, selection]);
   const rows = Array.from({ length: format.rows }, (_, i) => i);
@@ -103,6 +118,12 @@ export function PlateGrid({ format, selection, onSelect }: { format: PlateFormat
       onSelect((s) => move(format, s, arrow[0], arrow[1], e.shiftKey, jump));
     } else if (jump && e.key.toLowerCase() === "a") {
       onSelect((s) => selectAll(format, s));
+    } else if (e.key === "Enter" || e.key === "F2") {
+      onEdit();
+    } else if (e.key === "Delete" || e.key === "Backspace") {
+      onClear();
+    } else if (e.key.length === 1 && !e.ctrlKey && !e.metaKey && !e.altKey) {
+      onType(e.key);
     } else {
       return;
     }
@@ -112,6 +133,7 @@ export function PlateGrid({ format, selection, onSelect }: { format: PlateFormat
   return (
     <div className="plate-scroll">
       <div
+        ref={ref}
         className="plate"
         role="grid"
         tabIndex={0}
@@ -124,6 +146,7 @@ export function PlateGrid({ format, selection, onSelect }: { format: PlateFormat
         data-wells={format.wells}
         onPointerDown={down}
         onPointerMove={over}
+        onDoubleClick={(e) => (e.target as HTMLElement).closest(".well") && onEdit()}
         onKeyDown={key}
       >
         <div className="plate-row" role="row">
@@ -141,7 +164,9 @@ export function PlateGrid({ format, selection, onSelect }: { format: PlateFormat
             </div>
             {columns.map((c) => {
               const well = { row: r, column: c };
+              const index = wellIndex(format, well);
               const active = selection.active.row === r && selection.active.column === c;
+              const color = colors[index];
               return (
                 <div
                   key={c}
@@ -149,10 +174,14 @@ export function PlateGrid({ format, selection, onSelect }: { format: PlateFormat
                   className="well"
                   role="gridcell"
                   aria-label={wellName(well, "A1")}
-                  aria-selected={mask[wellIndex(format, well)] === 1}
+                  title={titles[index]}
+                  aria-selected={mask[index] === 1}
                   data-row={r}
                   data-column={c}
                   data-active={active || undefined}
+                  data-filled={color ? "" : undefined}
+                  data-dim={dimmed?.(index) || undefined}
+                  style={color ? ({ "--fill": color } as CSSProperties) : undefined}
                 />
               );
             })}

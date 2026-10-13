@@ -18,7 +18,7 @@ test("click, Shift-click and Ctrl-click", async ({ page }) => {
   await expect(ref(page)).toHaveText("B2");
   await well(page, "D5").click({ modifiers: ["Shift"] });
   await expect(ref(page)).toHaveText("B2:D5");
-  await expect(count(page)).toHaveText("12 wells selected");
+  await expect(count(page)).toHaveText("12 wells");
   await well(page, "F7").click({ modifiers: [mod] });
   await expect(ref(page)).toHaveText("B2:D5, F7");
   await expect(page.locator('.well[aria-selected="true"]')).toHaveCount(13);
@@ -43,7 +43,7 @@ test("row letters, column numbers and the corner", async ({ page }) => {
   await grid.getByRole("columnheader", { name: "12", exact: true }).click();
   await expect(ref(page)).toHaveText("A12:H12");
   await grid.getByRole("columnheader", { name: "Select all" }).click();
-  await expect(count(page)).toHaveText("96 wells selected");
+  await expect(count(page)).toHaveText("96 wells");
 });
 
 test("arrow keys, Shift+arrows, Ctrl+arrows and Ctrl+A", async ({ page }) => {
@@ -57,7 +57,7 @@ test("arrow keys, Shift+arrows, Ctrl+arrows and Ctrl+A", async ({ page }) => {
   await page.keyboard.press(`${mod}+ArrowRight`);
   await expect(ref(page)).toHaveText("C12");
   await page.keyboard.press(`${mod}+a`);
-  await expect(count(page)).toHaveText("96 wells selected");
+  await expect(count(page)).toHaveText("96 wells");
 });
 
 test("another format starts again at A1", async ({ page }) => {

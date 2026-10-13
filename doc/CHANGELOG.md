@@ -1,5 +1,17 @@
 # Changelog
 
+## 0.3.0
+
+- Layers: add text or number layers, rename, reorder, remove; an empty layer can switch between text and numbers.
+- Type on the plate: the value fills every selected well of the current layer (Enter), with suggestions from the
+  layer's values (Tab takes the first). Enter, F2 or a double-click edits; Delete clears.
+- A new text that differs from a known value only by case, spaces or punctuation asks which one is meant.
+- Number layers have a unit; "0,5", "1e-3" and "10 µM" (or "10 uM") are read, another unit is refused.
+- Each value has a colour on the plate and in the list beside it, with its number of wells. Click a value to put it
+  in the selected wells, hover it to light its wells, rename it everywhere, or remove it.
+- Below the plate, the active well's value in every layer; each well's tooltip lists them too.
+- Changing the format keeps each value in its well where the new plate has it, and asks before dropping any.
+
 ## 0.2.0
 
 - Select wells like spreadsheet cells: click, drag, Shift-click to extend, Ctrl/Cmd-click to add a block, a row
