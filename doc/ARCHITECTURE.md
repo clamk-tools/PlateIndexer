@@ -19,8 +19,11 @@ and hold no rule of their own, so the rules are tested once, without a browser.
                        extend, Ctrl/Cmd to add, whole rows and columns, arrows; its name ("B2:D5, F7")
  plate/values.ts       what a well holds (text, a number in the layer's unit, nothing); tidying text; reading
                        numbers ("0,5", "10 µM"); near-duplicates ("gene a-kd" ~ "Gene A KD"); suggestions
+ plate/clipboard.ts    copy, paste and the fill handle: blocks to and from tab-separated text, tiling a paste
+                       over a selection, stretching and repeating a block
  state/plate.ts        the plate: format and layers (name, kind, unit, value list with colours, one cell per
                        well); reduce(state, action) for every change; the legend of a layer
+ state/history.ts      undo and redo around reduce(): each change keeps the state before it
  ui/colors.ts          the colour of each value: categorical palette for text, sequential scale for numbers
  ui/FormatPicker.tsx   the plate format, as a segmented control
  ui/LayerBar.tsx       the layers as tabs, adding one, the current layer's name, kind, unit, order, removal
@@ -46,6 +49,10 @@ A layer imports only from the layers above it. No rule about wells lives in a co
   palette, `--cat-0`…`--cat-8` in plate.css) when other values go.
 - **Typing** starts on the plate (a printable key) and finishes in the entry bar: Enter fills every selected well
   of the current layer. A new text that differs from a known one only by case, spaces or punctuation asks first.
+- **Undo** keeps whole states (cheap: a state is a few arrays). Typing a layer's name is one step; choosing a layer
+  is none. A text box keeps its own undo while it has the focus.
+- **The clipboard** carries tab-separated text, the format spreadsheets use, so a block copied here pastes into
+  Excel and back. A copy made here is also kept typed (numbers stay numbers) for pasting within the page.
 - **Inside the tool, wells are kept row by row** (`wellIndex()`). The order chosen for the export is applied only
   when the list is written (`wellsInOrder()`).
 - **Look:** follow `doc/LLM feed for visual/LLMfeed_VISUAL-IDENTITY.md`. Colours come from the tokens in

@@ -1,11 +1,15 @@
-import { useMemo, useReducer, useRef, useState } from "react";
+import { useEffect, useMemo, useReducer, useRef, useState } from "react";
+import type { ClipboardEvent } from "react";
 
+import type { Clip } from "./plate/clipboard";
+import { asNumbers, asText, copyBlock, fillWrites, fromText, pasteTarget, tile, toText } from "./plate/clipboard";
 import { formatOf, wellName } from "./plate/plate";
 import type { Selection } from "./plate/selection";
 import { selectedCount, selectedMask, selectionLabel, single } from "./plate/selection";
 import type { Cell } from "./plate/values";
 import { cellText } from "./plate/values";
-import { currentLayer, initialState, lostOnFormat, reduce } from "./state/plate";
+import { canRedo, canUndo, start, undoable } from "./state/history";
+import { currentLayer, hasData, initialState, lostOnFormat } from "./state/plate";
 import { wellColors } from "./ui/colors";
 import type { EntryHandle } from "./ui/EntryBar";
 import { EntryBar } from "./ui/EntryBar";
@@ -18,12 +22,16 @@ import { ThemeSwitch } from "./ui/ThemeSwitch";
 // The page: the frame every Clamk tool has (rail, header with the name and the theme switch, footer) around the
 // plate. The plate's state (format, layers, values) is one reducer (state/plate.ts); the selection is kept beside it,
 // since selecting wells changes nothing on the plate. Typing goes through the entry bar into every selected well of
-// the current layer; the legend beside the plate lists that layer's values.
+// the current layer; the legend beside the plate lists that layer's values. Every change can be undone (state/history.ts).
+// Copy, cut and paste use the system clipboard as tab-separated text, so blocks go to and from a spreadsheet too.
 
 const FIRST_WELL = single({ row: 0, column: 0 });
 
 export function App() {
-  const [plate, dispatch] = useReducer(reduce, undefined, () => initialState(96));
+  const [history, dispatch] = useReducer(undoable, undefined, () => start(initialState(96)));
+  const plate = history.present;
+  const clip = useRef<{ text: string; clip: Clip } | null>(null); // the last copy, typed (text and numbers)
+  const [notice, setNotice] = useState("");
   const [selection, setSelection] = useState<Selection>(FIRST_WELL);
   const [lit, setLit] = useState<string | number | null>(null); // a legend value hovered: its wells stand out
   const entry = useRef<EntryHandle>(null);
@@ -52,6 +60,71 @@ export function App() {
 
   const activeIndex = selection.active.row * format.columns + selection.active.column;
   const fill = (cell: Cell) => dispatch({ type: "fill", indexes, cell });
+  const anyData = plate.layers.some(hasData);
+
+  // Undo and redo from anywhere but a text box (which keeps its own undo for the text being typed).
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if (!(e.ctrlKey || e.metaKey) || (e.target as HTMLElement).closest("input, textarea")) return;
+      const k = e.key.toLowerCase();
+      if (k === "z" && !e.shiftKey) dispatch({ type: "undo" });
+      else if (k === "y" || (k === "z" && e.shiftKey)) dispatch({ type: "redo" });
+      else return;
+      e.preventDefault();
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, []);
+
+  // Nothing is saved yet (doc/ROADMAP.md, later): leaving a described plate asks first.
+  useEffect(() => {
+    if (!anyData) return;
+    const warn = (e: BeforeUnloadEvent) => e.preventDefault();
+    window.addEventListener("beforeunload", warn);
+    return () => window.removeEventListener("beforeunload", warn);
+  }, [anyData]);
+
+  useEffect(() => {
+    if (!notice) return;
+    const t = setTimeout(() => setNotice(""), 6000);
+    return () => clearTimeout(t);
+  }, [notice]);
+
+  // The selected block to the clipboard; false when the selection is several blocks (a spreadsheet refuses too).
+  const copy = (e: ClipboardEvent<HTMLDivElement>): boolean => {
+    e.preventDefault();
+    if (selection.blocks.length > 1) {
+      setNotice("Copy works on one block of wells: select a single block.");
+      return false;
+    }
+    const c = copyBlock(format, layer.cells, selection.blocks[0]);
+    const text = toText(c);
+    clip.current = { text, clip: c };
+    e.clipboardData.setData("text/plain", text);
+    return true;
+  };
+
+  const cut = (e: ClipboardEvent<HTMLDivElement>) => {
+    if (copy(e)) fill(null);
+  };
+
+  const paste = (e: ClipboardEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    const text = e.clipboardData.getData("text/plain");
+    if (!text) return;
+    const raw = clip.current?.text === text ? clip.current.clip : fromText(text);
+    let ready = asText(raw);
+    if (layer.kind === "number") {
+      const converted = asNumbers(raw, layer.unit);
+      if (!converted.ok) return setNotice(converted.message);
+      ready = converted.clip;
+    }
+    const target = pasteTarget(ready, selection);
+    dispatch({ type: "put", writes: tile(format, ready, target) });
+    const bottom = Math.min(target.bottom, format.rows - 1);
+    const right = Math.min(target.right, format.columns - 1);
+    setSelection({ blocks: [{ ...target, bottom, right }], active: { row: target.top, column: target.left }, focus: { row: bottom, column: right } });
+  };
   const backToPlate = () => grid.current?.focus();
 
   // Another format: values stay in their wells where the new plate has them; the selection starts again at A1.
@@ -79,7 +152,17 @@ export function App() {
 
       <main className="wrap page">
         <p className="lede">Describe a microplate layer by layer, then export one row per well.</p>
-        <FormatPicker wells={plate.wells} onChange={changeFormat} />
+        <div className="toolbar">
+          <FormatPicker wells={plate.wells} onChange={changeFormat} />
+          <div className="history-buttons">
+            <button type="button" className="compact" disabled={!canUndo(history)} onClick={() => dispatch({ type: "undo" })} title="Undo (Ctrl+Z)">
+              Undo
+            </button>
+            <button type="button" className="compact" disabled={!canRedo(history)} onClick={() => dispatch({ type: "redo" })} title="Redo (Ctrl+Y)">
+              Redo
+            </button>
+          </div>
+        </div>
         <LayerBar layers={plate.layers} current={layer} dispatch={dispatch} />
         <EntryBar
           ref={entry}
@@ -104,7 +187,16 @@ export function App() {
               onType={(text) => entry.current?.start(text)}
               onEdit={() => entry.current?.edit()}
               onClear={() => fill(null)}
+              onCopy={copy}
+              onCut={cut}
+              onPaste={paste}
+              onFillHandle={(source, target) => dispatch({ type: "put", writes: fillWrites(format, layer.cells, source, target) })}
             />
+            {notice && (
+              <p className="entry-note error" role="status">
+                {notice}
+              </p>
+            )}
             <p className="inspector">
               <span className="inspector-well">{wellName(selection.active, "A1")}</span>
               {plate.layers.map((l) => (
