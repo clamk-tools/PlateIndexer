@@ -15,6 +15,7 @@ import type { EntryHandle } from "./ui/EntryBar";
 import { EntryBar } from "./ui/EntryBar";
 import { ExportPanel } from "./ui/ExportPanel";
 import { FormatPicker } from "./ui/FormatPicker";
+import { Help } from "./ui/Help";
 import { LayerBar } from "./ui/LayerBar";
 import { Legend } from "./ui/Legend";
 import { PlateGrid } from "./ui/PlateGrid";
@@ -152,7 +153,10 @@ export function App() {
       </header>
 
       <main className="wrap page">
-        <p className="lede">Describe a microplate layer by layer, then export one row per well.</p>
+        <div className="intro">
+          <p className="lede">Describe a microplate layer by layer, then export one row per well.</p>
+          <Help />
+        </div>
         <div className="toolbar">
           <FormatPicker wells={plate.wells} onChange={changeFormat} />
           <div className="history-buttons">

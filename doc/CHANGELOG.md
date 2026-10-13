@@ -1,5 +1,13 @@
 # Changelog
 
+## 1.0.0
+
+- "How it works" under the introduction: what a layer is, and every gesture and key.
+- On a phone (or a 1536-well plate), the row letters stay in view while the plate scrolls sideways.
+- A selected well keeps a visible ring on every value colour, the blue included.
+- An automated accessibility check (WCAG 2.1 AA) runs on every change, in light and dark.
+- README: a step-by-step guide.
+
 ## 0.5.0
 
 - Export: one row per well (well, row letter, column number), a column per text layer, a value and a unit column per

@@ -36,7 +36,7 @@ in the order and well naming the instrument expects.
 | 4 | Layers: add, rename, delete, reorder; text or number + unit; type into the selected wells; the value list with colours and a legend; suggestions while typing; warning on near-duplicates; hover shows a well's values in every layer | 3 | done |
 | 5 | Editing like Excel: Delete clears, copy and paste within the plate, fill handle, undo and redo; warning before leaving with unsaved work | 4 | done |
 | 6 | CSV export: order, naming, empty wells in or out; checked against a rebuilt copy of the reference workbook (invented names) | 4 | done |
-| 7 | Polish: phone and tablet layout, keyboard and screen reader pass, full browser tests, README, listing on the hub | 5, 6 | to do |
+| 7 | Polish: phone and tablet layout, keyboard and screen reader pass, full browser tests, README, listing on the hub | 5, 6 | done (the hub listing is a repo setting: see README) |
 
 ## Later (deferred on purpose)
 
