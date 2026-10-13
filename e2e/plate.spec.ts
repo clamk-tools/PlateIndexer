@@ -23,3 +23,10 @@ test("loads nothing from outside the site", async ({ page }) => {
   await expect(page.getByRole("grid")).toBeVisible();
   expect(outside).toEqual([]);
 });
+
+test("a tap selects a well on a phone", async ({ page }, info) => {
+  test.skip(info.project.name !== "mobile", "touch only");
+  await page.goto("./");
+  await page.getByRole("gridcell", { name: "C5", exact: true }).tap();
+  await expect(page.locator(".selection-ref")).toHaveText("C5");
+});
