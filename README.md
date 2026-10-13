@@ -10,7 +10,8 @@ Runs in your browser: nothing to install, nothing sent anywhere.
 
 Being built. Today you can choose a plate format (6 to 1536 wells), select wells as in a spreadsheet, and describe
 the plate in layers (text, or numbers with a unit) by typing into the selected wells; each value gets a colour. Copy,
-paste (also from Excel), the fill handle and undo work as in a spreadsheet. The CSV export comes next: see [`doc/ROADMAP.md`](doc/ROADMAP.md).
+paste (also from Excel), the fill handle and undo work as in a spreadsheet. The result exports as a CSV file (one row
+per well, in the order your instrument expects) or copies straight into a spreadsheet: see [`doc/ROADMAP.md`](doc/ROADMAP.md).
 
 ## For developers
 

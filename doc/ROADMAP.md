@@ -23,7 +23,7 @@ in the order and well naming the instrument expects.
 | Well naming | Chosen at export: A1 or A01 |
 | What a layer holds | Text, or a number with a unit (exported as two columns: value, unit) |
 | Freedom | Close to Excel: free typing, with suggestions from the layer's list and a warning on near-duplicates |
-| Export format | CSV (opens in Excel). Native .xlsx later |
+| Export format | CSV (opens in Excel; comma, or semicolon with decimal comma for Excel in French and other European settings; or tab), and the table copied for pasting. Native .xlsx later |
 | Where it runs | In the browser only. Nothing is sent anywhere |
 
 ## Tasks
@@ -35,7 +35,7 @@ in the order and well naming the instrument expects.
 | 3 | Selection like Excel: click, drag, Shift-click, Ctrl/Cmd-click, row and column headers, select all, arrow keys | 2 | done |
 | 4 | Layers: add, rename, delete, reorder; text or number + unit; type into the selected wells; the value list with colours and a legend; suggestions while typing; warning on near-duplicates; hover shows a well's values in every layer | 3 | done |
 | 5 | Editing like Excel: Delete clears, copy and paste within the plate, fill handle, undo and redo; warning before leaving with unsaved work | 4 | done |
-| 6 | CSV export: order, naming, empty wells in or out; checked against a rebuilt copy of the reference workbook (invented names) | 4 | to do |
+| 6 | CSV export: order, naming, empty wells in or out; checked against a rebuilt copy of the reference workbook (invented names) | 4 | done |
 | 7 | Polish: phone and tablet layout, keyboard and screen reader pass, full browser tests, README, listing on the hub | 5, 6 | to do |
 
 ## Later (deferred on purpose)
