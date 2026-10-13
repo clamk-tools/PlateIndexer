@@ -54,7 +54,9 @@
 /* the plate keeps its 2:3 shape; a phone scrolls it sideways rather than shrinking the wells to nothing */
 .plate-scroll {
   overflow-x: auto;
-  padding-bottom: 4px;
+  /* room for the plate's focus outline, which the scrolling box would otherwise cut */
+  padding: 6px;
+  margin: -6px;
 }
 
 .plate {
@@ -103,4 +105,65 @@
   border: 1px solid var(--border);
   border-radius: 50%;
   background: var(--bg);
+}
+
+/* ---------- selection ---------- */
+
+.plate {
+  user-select: none;
+  -webkit-user-select: none;
+  /* a finger scrolls the plate; a mouse drag selects (PlateGrid.tsx) */
+  touch-action: pan-x pan-y;
+}
+
+.plate:focus-visible {
+  outline-offset: 3px;
+}
+
+.plate-corner,
+.plate-head {
+  cursor: pointer;
+  border-radius: var(--radius-sm);
+}
+
+.plate-head:hover,
+.plate-corner:hover {
+  background: var(--accent-tint);
+}
+
+.plate-head[data-lit] {
+  color: var(--accent);
+  font-weight: 600;
+}
+
+.well {
+  cursor: cell;
+}
+
+.well[aria-selected="true"] {
+  border-color: var(--accent);
+  background: var(--accent-tint);
+}
+
+/* the active well: where a typed value goes first */
+.well[data-active] {
+  box-shadow: 0 0 0 2px var(--accent);
+}
+
+/* the name box: the selection as a spreadsheet writes it, and its size */
+.selection-bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 4px 12px;
+  margin: 0;
+  min-height: 1.5em;
+  font-size: 0.85rem;
+  color: var(--muted);
+}
+
+.selection-ref {
+  font: 600 0.8rem/1.5 var(--font-mono);
+  color: var(--text);
+  overflow-wrap: anywhere;
 }

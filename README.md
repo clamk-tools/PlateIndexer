@@ -8,8 +8,8 @@ Runs in your browser: nothing to install, nothing sent anywhere.
 
 ## Status
 
-Being built. Today you can choose a plate format (6 to 1536 wells) and see the plate. Layers, typing into wells and
-the CSV export come next: see [`doc/ROADMAP.md`](doc/ROADMAP.md).
+Being built. Today you can choose a plate format (6 to 1536 wells) and select wells as in a spreadsheet (click, drag,
+Shift, Ctrl/Cmd, row letters, column numbers, arrow keys). Layers, typing into wells and the CSV export come next: see [`doc/ROADMAP.md`](doc/ROADMAP.md).
 
 ## For developers
 

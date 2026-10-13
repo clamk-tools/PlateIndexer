@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.2.0
+
+- Select wells like spreadsheet cells: click, drag, Shift-click to extend, Ctrl/Cmd-click to add a block, a row
+  letter or column number for the whole line, the corner (or Ctrl/Cmd+A) for the whole plate, arrow keys (Shift
+  extends, Ctrl/Cmd jumps to the edge).
+- The name box above the plate says what is selected ("B2:D5, F7") and how many wells.
+
 ## 0.1.0
 
 - The tool's foundation, from the clamk-tools template: React + TypeScript + Vite, tests (Vitest, Playwright), the
