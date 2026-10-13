@@ -518,3 +518,43 @@
   --seq-tint: #1b4030;
   --seq-ink: #7ee8b0;
 }
+
+/* ---------- editing ---------- */
+
+.toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px 16px;
+}
+
+.history-buttons {
+  display: flex;
+  gap: 6px;
+}
+
+.well {
+  position: relative;
+}
+
+/* the fill handle: a small square at the corner of the block, as in a spreadsheet */
+.fill-handle {
+  position: absolute;
+  right: -3px;
+  bottom: -3px;
+  width: 8px;
+  height: 8px;
+  border: 1px solid var(--surface);
+  border-radius: 2px;
+  background: var(--accent);
+  cursor: crosshair;
+  touch-action: none;
+}
+
+.plate[data-wells="1536"] .fill-handle {
+  width: 6px;
+  height: 6px;
+  right: -2px;
+  bottom: -2px;
+}

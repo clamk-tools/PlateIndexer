@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.4.0
+
+- Undo and redo (Ctrl/Cmd+Z, Ctrl/Cmd+Y or Ctrl/Cmd+Shift+Z, and buttons) for every change to the plate.
+- Copy, cut and paste a block of wells (Ctrl/Cmd+C, X, V). Pasting over a selection that is a whole multiple of the
+  block repeats it, as in Excel. Blocks travel as tab-separated text, so they paste into a spreadsheet, and a block
+  copied from a spreadsheet pastes into a layer (numbers read in the layer's unit).
+- The fill handle: drag the small square at the corner of a block to repeat it down or across.
+- The page asks before closing when the plate holds values (nothing is saved yet).
+
 ## 0.3.0
 
 - Layers: add text or number layers, rename, reorder, remove; an empty layer can switch between text and numbers.

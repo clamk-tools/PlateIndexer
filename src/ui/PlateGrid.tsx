@@ -1,21 +1,23 @@
 import { useEffect, useMemo, useRef } from "react";
-import type { CSSProperties, KeyboardEvent, PointerEvent, Ref } from "react";
+import type { ClipboardEvent, CSSProperties, KeyboardEvent, PointerEvent, Ref } from "react";
 
 import type { PlateFormat, Well } from "../plate/plate";
 import { columnLabel, rowLabel, wellIndex, wellName } from "../plate/plate";
-import type { Mode, Selection } from "../plate/selection";
+import { fillTarget } from "../plate/clipboard";
+import type { Block, Mode, Selection } from "../plate/selection";
 import { move, pick, pickColumn, pickRow, selectAll, selectedMask } from "../plate/selection";
 
 // The plate as a grid, selected like a spreadsheet: click, drag, Shift-click, Ctrl/Cmd-click, the row letters and
 // column numbers, the corner, the arrow keys (Shift extends, Ctrl/Cmd jumps to the edge), Ctrl/Cmd+A. The rules are in
 // plate/selection.ts; this file only turns pointer and key events into them. Each well shows the colour of its value
 // in the current layer. A printable key starts typing (handed to the entry bar), Enter, F2 or a double-click edits the
-// active well's value, Delete or Backspace clears the selected wells.
+// active well's value, Delete or Backspace clears the selected wells. Copy, cut and paste are the browser's own events
+// (handed to App); the small square at the corner of a single block is the fill handle.
 
 type Update = (next: (s: Selection) => Selection) => void;
 
-// What a drag is extending: wells, whole rows or whole columns.
-type Drag = "well" | "row" | "column" | null;
+// What a drag is extending: wells, whole rows, whole columns, or the fill handle.
+type Drag = "well" | "row" | "column" | "fill" | null;
 
 const ARROWS: Record<string, [number, number]> = { ArrowUp: [-1, 0], ArrowDown: [1, 0], ArrowLeft: [0, -1], ArrowRight: [0, 1] };
 
@@ -43,10 +45,17 @@ interface Props {
   onType: (text: string) => void;
   onEdit: () => void;
   onClear: () => void;
+  onCopy: (e: ClipboardEvent<HTMLDivElement>) => void;
+  onCut: (e: ClipboardEvent<HTMLDivElement>) => void;
+  onPaste: (e: ClipboardEvent<HTMLDivElement>) => void;
+  onFillHandle: (source: Block, target: Block) => void;
 }
 
-export function PlateGrid({ ref, format, selection, onSelect, colors, titles, dimmed, onType, onEdit, onClear }: Props) {
+export function PlateGrid({ ref, format, selection, onSelect, colors, titles, dimmed, onType, onEdit, onClear, onCopy, onCut, onPaste, onFillHandle }: Props) {
   const drag = useRef<Drag>(null);
+  const fill = useRef<{ source: Block; target: Block } | null>(null);
+  // The fill handle sits on the bottom-right well of the selection when it is one block.
+  const handleAt = selection.blocks.length === 1 ? { row: selection.blocks[0].bottom, column: selection.blocks[0].right } : null;
   const mask = useMemo(() => selectedMask(format, selection), [format, selection]);
   const rows = Array.from({ length: format.rows }, (_, i) => i);
   const columns = Array.from({ length: format.columns }, (_, i) => i);
@@ -73,6 +82,13 @@ export function PlateGrid({ ref, format, selection, onSelect, colors, titles, di
 
   function down(e: PointerEvent<HTMLDivElement>) {
     if (e.button !== 0) return;
+    if ((e.target as HTMLElement).closest(".fill-handle")) {
+      const source = selection.blocks[0];
+      fill.current = { source, target: source };
+      drag.current = "fill";
+      e.preventDefault();
+      return;
+    }
     const t = targetAt(e.clientX, e.clientY);
     if (!t) return;
     const mode = modeOf(e);
@@ -99,7 +115,11 @@ export function PlateGrid({ ref, format, selection, onSelect, colors, titles, di
     if (!drag.current) return;
     const t = targetAt(e.clientX, e.clientY);
     if (!t) return;
-    if (drag.current === "well" && t.row !== undefined && t.column !== undefined) {
+    if (drag.current === "fill" && fill.current && t.row !== undefined && t.column !== undefined) {
+      const target = fillTarget(fill.current.source, { row: t.row, column: t.column });
+      fill.current = { ...fill.current, target };
+      onSelect((s) => ({ ...s, blocks: [target], focus: { row: target.bottom, column: target.right } }));
+    } else if (drag.current === "well" && t.row !== undefined && t.column !== undefined) {
       const well = { row: t.row, column: t.column };
       onSelect((s) => (s.focus.row === well.row && s.focus.column === well.column ? s : pick(s, well, "extend")));
     } else if (drag.current === "row" && t.row !== undefined) {
@@ -146,6 +166,13 @@ export function PlateGrid({ ref, format, selection, onSelect, colors, titles, di
         data-wells={format.wells}
         onPointerDown={down}
         onPointerMove={over}
+        onPointerUp={() => {
+          if (drag.current === "fill" && fill.current) onFillHandle(fill.current.source, fill.current.target);
+          fill.current = null;
+        }}
+        onCopy={onCopy}
+        onCut={onCut}
+        onPaste={onPaste}
         onDoubleClick={(e) => (e.target as HTMLElement).closest(".well") && onEdit()}
         onKeyDown={key}
       >
@@ -182,7 +209,9 @@ export function PlateGrid({ ref, format, selection, onSelect, colors, titles, di
                   data-filled={color ? "" : undefined}
                   data-dim={dimmed?.(index) || undefined}
                   style={color ? ({ "--fill": color } as CSSProperties) : undefined}
-                />
+                >
+                  {handleAt && handleAt.row === r && handleAt.column === c && <span className="fill-handle" title="Drag to repeat the selection" aria-hidden="true" />}
+                </div>
               );
             })}
           </div>

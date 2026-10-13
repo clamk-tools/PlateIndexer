@@ -34,13 +34,14 @@ in the order and well naming the instrument expects.
 | 2 | Plate geometry: formats, well names (A1/A01), both orders, tests; format choice and the plate drawn read-only | 1 | done |
 | 3 | Selection like Excel: click, drag, Shift-click, Ctrl/Cmd-click, row and column headers, select all, arrow keys | 2 | done |
 | 4 | Layers: add, rename, delete, reorder; text or number + unit; type into the selected wells; the value list with colours and a legend; suggestions while typing; warning on near-duplicates; hover shows a well's values in every layer | 3 | done |
-| 5 | Editing like Excel: Delete clears, copy and paste within the plate, fill handle, undo and redo; warning before leaving with unsaved work | 4 | to do |
+| 5 | Editing like Excel: Delete clears, copy and paste within the plate, fill handle, undo and redo; warning before leaving with unsaved work | 4 | done |
 | 6 | CSV export: order, naming, empty wells in or out; checked against a rebuilt copy of the reference workbook (invented names) | 4 | to do |
 | 7 | Polish: phone and tablet layout, keyboard and screen reader pass, full browser tests, README, listing on the hub | 5, 6 | to do |
 
 ## Later (deferred on purpose)
 
-- Paste a plate grid from Excel into a layer.
+- ~~Paste a plate grid from Excel into a layer.~~ Came with Task 5: paste reads the tab-separated text a spreadsheet
+  copies.
 - Save a layout to a file and open it again; keep the work across a page refresh.
 - Native .xlsx export.
 - Helpers for replicates and dilution series; a printable bench sheet; templates.

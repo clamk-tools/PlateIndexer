@@ -39,6 +39,7 @@ export type Action =
   | { type: "moveLayer"; id: number; by: -1 | 1 }
   | { type: "selectLayer"; id: number }
   | { type: "fill"; indexes: number[]; cell: Cell }
+  | { type: "put"; writes: { index: number; cell: Cell }[] }
   | { type: "addValue"; label: string }
   | { type: "renameValue"; from: string; to: string }
   | { type: "removeValue"; cell: string | number };
@@ -146,6 +147,19 @@ export function reduce(state: PlateState, action: Action): PlateState {
         const cells = [...l.cells];
         for (const i of action.indexes) cells[i] = cell;
         return typeof cell === "string" ? withEntry({ ...l, cells }, cell) : { ...l, cells };
+      });
+
+    // Different values in different wells (a paste, the fill handle): text values join the list in order.
+    case "put":
+      return mapLayer(state, state.current, (l) => {
+        const cells = [...l.cells];
+        let next = l;
+        for (const w of action.writes) {
+          const cell = typeof w.cell === "string" ? tidy(w.cell) || null : w.cell;
+          cells[w.index] = cell;
+          if (typeof cell === "string") next = withEntry(next, cell);
+        }
+        return { ...next, cells };
       });
 
     case "addValue": {
