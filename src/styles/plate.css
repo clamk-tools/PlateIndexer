@@ -1,0 +1,106 @@
+/* The tool's own parts: the format control and the plate. Colours are the theme's tokens only. */
+
+.lede {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.95rem;
+}
+
+/* a labelled control: the mono label, then the control */
+.field {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 12px;
+}
+
+.cap {
+  font: 600 0.7rem/1 var(--font-mono);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+/* segmented control: a surface track, the chosen segment in the accent tint */
+.segmented {
+  display: inline-flex;
+  flex-wrap: wrap;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-control);
+  background: var(--surface);
+  overflow: hidden;
+}
+
+.segmented button {
+  height: 30px;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  color: var(--muted);
+  font-family: var(--font-mono);
+}
+
+.segmented button + button {
+  border-left: 1px solid var(--border);
+}
+
+.segmented button[aria-checked="true"] {
+  background: var(--accent-tint);
+  color: var(--accent);
+}
+
+/* ---------- plate ---------- */
+
+/* the plate keeps its 2:3 shape; a phone scrolls it sideways rather than shrinking the wells to nothing */
+.plate-scroll {
+  overflow-x: auto;
+  padding-bottom: 4px;
+}
+
+.plate {
+  --head: 22px;
+  display: grid;
+  grid-template-columns: var(--head) repeat(var(--columns), minmax(var(--well-min, 22px), var(--well-max, 46px)));
+  justify-content: start;
+  gap: 3px;
+  width: max-content;
+  box-sizing: border-box;
+  padding: 12px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  background: var(--surface);
+}
+
+.plate[data-wells="1536"] {
+  --well-min: 12px;
+  gap: 2px;
+}
+
+.plate[data-wells="384"] {
+  --well-min: 18px;
+}
+
+/* a row is only a grouping for screen readers: its cells sit in the plate's grid */
+.plate-row {
+  display: contents;
+}
+
+.plate-corner,
+.plate-head {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font: 500 0.68rem/1 var(--font-mono);
+  color: var(--muted);
+}
+
+.plate[data-wells="1536"] .plate-head {
+  font-size: 0.55rem;
+}
+
+.well {
+  aspect-ratio: 1;
+  border: 1px solid var(--border);
+  border-radius: 50%;
+  background: var(--bg);
+}

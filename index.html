@@ -1,35 +1,18 @@
 <!doctype html>
 <html lang="en">
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Tool name</title>
-  <style>
-    :root { --bg: #ffffff; --text: #1f2328; --muted: #59636e; --accent: #0969da; }
-    @media (prefers-color-scheme: dark) {
-      :root { --bg: #0d1117; --text: #e6edf3; --muted: #9198a1; --accent: #4493f8; }
-    }
-    body {
-      margin: 0;
-      background: var(--bg);
-      color: var(--text);
-      font: 16px/1.5 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
-    }
-    main { max-width: 720px; margin: 0 auto; padding: 32px 16px; }
-    a { color: var(--accent); }
-    header { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
-    header h1 { margin: 0; }
-    .back { color: var(--muted); text-decoration: none; }
-    .back:hover { color: var(--text); }
-  </style>
-</head>
-<body>
-  <main>
-    <header>
-      <h1>Tool name</h1>
-      <a class="back" href="https://clamk-tools.github.io/">← All tools</a>
-    </header>
-    <p>What it does in one line.</p>
-  </main>
-</body>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Plate Indexer</title>
+    <meta name="description" content="Design a microplate layout layer by layer and export one row per well. Runs in your browser." />
+    <link rel="icon" type="image/svg+xml" href="./favicon.svg" />
+    <!-- The stored theme, applied before the first paint (public/theme.js). A file, not inline: the built page's
+         Content-Security-Policy allows no inline script (vite.config.ts). -->
+    <script src="/theme.js"></script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <noscript>Plate Indexer needs JavaScript: it runs in your browser.</noscript>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
 </html>
