@@ -19,11 +19,16 @@ async function type(page: Page, text: string) {
   await page.keyboard.press("Enter");
 }
 
+// Clipboard events on the plate. The data is set on the event directly: Firefox leaves out the clipboardData given to
+// a ClipboardEvent made by a script (a real paste there carries it as usual).
+
 // A copy or cut event on the plate; returns what it put on the clipboard.
 const clipboard = (page: Page, kind: "copy" | "cut") =>
   page.getByRole("grid").evaluate((grid, kind) => {
     const data = new DataTransfer();
-    grid.dispatchEvent(new ClipboardEvent(kind, { clipboardData: data, bubbles: true, cancelable: true }));
+    const event = new Event(kind, { bubbles: true, cancelable: true });
+    Object.defineProperty(event, "clipboardData", { value: data });
+    grid.dispatchEvent(event);
     return data.getData("text/plain");
   }, kind);
 
@@ -31,7 +36,9 @@ const paste = (page: Page, text: string) =>
   page.getByRole("grid").evaluate((grid, text) => {
     const data = new DataTransfer();
     data.setData("text/plain", text);
-    grid.dispatchEvent(new ClipboardEvent("paste", { clipboardData: data, bubbles: true, cancelable: true }));
+    const event = new Event("paste", { bubbles: true, cancelable: true });
+    Object.defineProperty(event, "clipboardData", { value: data });
+    grid.dispatchEvent(event);
   }, text);
 
 test.beforeEach(async ({ page }, info) => {
