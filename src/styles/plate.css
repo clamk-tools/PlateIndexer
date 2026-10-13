@@ -635,3 +635,95 @@
   font-size: 0.85rem;
   color: var(--green-text);
 }
+
+/* ---------- polish ---------- */
+
+/* the row letters stay in view while a wide plate scrolls sideways (a phone, a 1536-well plate) */
+.plate-corner,
+.plate-head[role="rowheader"] {
+  position: sticky;
+  left: 0;
+  z-index: 1;
+  background: var(--surface);
+}
+
+.intro {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.help summary {
+  width: max-content;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--accent);
+  cursor: pointer;
+}
+
+.help[open] {
+  padding: 4px 14px 12px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  background: var(--surface);
+}
+
+.help[open] summary {
+  margin-bottom: 6px;
+}
+
+.help p {
+  margin: 6px 0;
+  font-size: 0.875rem;
+}
+
+.help table {
+  border-collapse: collapse;
+  font-size: 0.85rem;
+}
+
+.help th,
+.help td {
+  padding: 4px 14px 4px 0;
+  border-bottom: 1px solid var(--border);
+  text-align: left;
+  vertical-align: top;
+}
+
+.help th {
+  font: 600 0.75rem/1.6 var(--font-mono);
+  white-space: nowrap;
+}
+
+.help-note {
+  color: var(--muted);
+}
+
+@media (max-width: 600px) {
+  .help th {
+    white-space: normal;
+  }
+
+  .layer-actions {
+    margin-left: 0;
+  }
+
+  .name-box {
+    min-width: 5.5em;
+  }
+}
+
+/* a selected well that holds a value: a surface-coloured gap inside the accent ring keeps the ring visible on any
+   value colour, the accent blue included */
+.well[data-filled][aria-selected="true"] {
+  box-shadow:
+    inset 0 0 0 2px var(--accent),
+    inset 0 0 0 4px var(--surface);
+}
+
+.well[data-filled][data-active] {
+  box-shadow:
+    inset 0 0 0 2px var(--accent),
+    inset 0 0 0 4px var(--surface),
+    0 0 0 2px var(--accent);
+}

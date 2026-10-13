@@ -34,6 +34,7 @@ and hold no rule of their own, so the rules are tested once, without a browser.
                        drags and keys into selection calls, and hands typing to the entry bar
  ui/Legend.tsx         the current layer's values: paint with one, light its wells, rename, remove, add
  ui/ExportPanel.tsx    the export choices, a preview, the CSV download and "Copy table"
+ ui/Help.tsx           "How it works": the gestures and keys, folded under the introduction
  ui/ThemeSwitch.tsx    the family's light/dark switch (ui/theme.ts: shared with the hub and the other tools)
  App.tsx               the frame (rail, header, footer) around the plate
  styles/               theme.css: tokens and controls (shared with the other tools); app.css: frame;
@@ -72,7 +73,7 @@ A layer imports only from the layers above it. No rule about wells lives in a co
 | `npm test` | the rules (`src/**/*.test.ts`, Vitest) |
 | `npm run lint` | code style (ESLint) |
 | `npm run build` | types (TypeScript) and the built site in `dist/` |
-| `npm run e2e` | the built site in real browsers (Playwright), served under `/PlateIndexer/` as on GitHub Pages |
+| `npm run e2e` | the built site in real browsers (Playwright), served under `/PlateIndexer/` as on GitHub Pages, with an automated accessibility pass (axe, WCAG 2.1 AA) in both themes |
 
 `PLAYWRIGHT_CHROMIUM=<path>` uses a Chromium already on the machine; `PLAYWRIGHT_ONLY_CHROMIUM=1` skips Firefox and
 WebKit. CI (`.github/workflows/ci.yml`) runs the privacy check and all of the above on every pull request, and
