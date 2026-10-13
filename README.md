@@ -1,49 +1,31 @@
-# Tool name
+# Plate Indexer
 
-What it does in one line.
+Describe a microplate layer by layer (siRNA, treatment, dose…), then export one row per well.
 
-**Open it:** https://clamk-tools.github.io/REPO-NAME/
+**Open it:** https://clamk-tools.github.io/PlateIndexer/
 
----
+Runs in your browser: nothing to install, nothing sent anywhere.
 
-## Starting a new tool from this template
+## Status
 
-1. On GitHub: **Use this template → Create a new repository**, owner `clamk-tools`.
-2. Settings → Pages → Source: **GitHub Actions**.
-3. Repo page, gear next to **About**: description, Website `https://clamk-tools.github.io/<repo>/`, topic `tool`.
-   The tool then appears on the [hub](https://clamk-tools.github.io/).
-4. Clone it, then **before the first commit**: `git config core.hooksPath .githooks`
-   and `git config user.email "<id>+<user>@users.noreply.github.com"` (see [Privacy](#privacy)).
-5. Replace this section and the placeholders above.
+Being built. Today you can choose a plate format (6 to 1536 wells) and see the plate. Layers, typing into wells and
+the CSV export come next: see [`doc/ROADMAP.md`](doc/ROADMAP.md).
+
+## For developers
+
+```
+npm install
+npm run dev        # http://localhost:5185
+npm test           # rules
+npm run lint
+npm run build
+npm run e2e        # built site in real browsers
+```
+
+How it is made: [`doc/ARCHITECTURE.md`](doc/ARCHITECTURE.md). Look: [`doc/LLM feed for visual/`](doc/LLM%20feed%20for%20visual/).
 
 ## Privacy
 
-This repo is public, so nothing personal may reach it. `.githooks/check-privacy.sh` blocks, in the commit
-identity, the commit message and the content of the changes:
-
-- an email address that is not a GitHub noreply address,
-- a private path on a local machine (a Windows drive path or a macOS home folder path),
-- tokens and private keys,
-- any private term listed in `~/.git-privacy-terms` (all repos) or `.git/privacy-terms` (this repo, never pushed):
-  one per line, e.g. an OS user name, a machine name or a private project name.
-
-It never prints what it found, only `file:line`. It runs as a `pre-commit`, `commit-msg` and `pre-push` hook (turned
-on by `git config core.hooksPath .githooks`, once per clone) and in CI before every deploy. The CI run cannot
-prevent a leak, because the commits are already on GitHub by then: the hooks and the two GitHub account
-settings (**Keep my email addresses private**, **Block command line pushes that expose my email**) do.
-
-A line that holds an invented example (a fake path in a test, say) can carry the marker `privacy-ok` in a comment.
-
-Audit an existing repo: `sh .githooks/check-privacy.sh --tree` (files now) and `sh .githooks/check-privacy.sh HEAD`
-(the whole history). To add this to another repo, copy `.githooks/`, `.gitattributes` and the `privacy-guard` job
-of `pages.yml`.
-
-## Deploying
-
-`.github/workflows/pages.yml` runs on every push to `main`, after the privacy check:
-
-- **Plain HTML** (no `package.json` build script): the repo root is published.
-- **With a build** (`npm run build` exists): it runs `npm ci && npm run build` and publishes `dist/`.
-  The site lives under `/<repo>/`, so set the bundler's base path to it
-  (Vite `base: "/<repo>/"`, Expo `experiments.baseUrl: "/<repo>"`).
-  Any other stack: change the build step in the workflow.
+This repo is public, so nothing personal may reach it. `.githooks/check-privacy.sh` blocks a commit or push that
+carries a personal email address, a private local path, a token or key, or a term listed in `~/.git-privacy-terms` or
+`.git/privacy-terms`. Turn the hooks on once per clone: `git config core.hooksPath .githooks`. CI runs the same check.
