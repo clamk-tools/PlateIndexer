@@ -37,6 +37,10 @@
   border-radius: 0;
   background: transparent;
   color: var(--muted);
+}
+
+/* numbers (the plate formats) in the mono voice */
+.segmented.mono button {
   font-family: var(--font-mono);
 }
 
@@ -557,4 +561,77 @@
   height: 6px;
   right: -2px;
   bottom: -2px;
+}
+
+/* ---------- export ---------- */
+
+.export {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 18px;
+}
+
+.export-options {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px 22px;
+}
+
+.export-hint,
+.export-count {
+  margin: 0;
+  font-size: 0.8rem;
+  color: var(--muted);
+}
+
+.export-preview {
+  overflow-x: auto;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  background: var(--surface);
+}
+
+.export-preview table {
+  border-collapse: collapse;
+  font: 500 0.78rem/1.4 var(--font-mono);
+  white-space: nowrap;
+}
+
+.export-preview th,
+.export-preview td {
+  padding: 5px 12px;
+  border-bottom: 1px solid var(--border);
+  text-align: left;
+}
+
+.export-preview th {
+  color: var(--muted);
+  font-weight: 600;
+}
+
+.export-count {
+  padding: 6px 12px;
+}
+
+.export-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px 12px;
+}
+
+.export-actions input {
+  width: 12em;
+}
+
+.export-ext {
+  margin-left: -6px;
+  font: 500 0.8rem var(--font-mono);
+  color: var(--muted);
+}
+
+.export-copied {
+  font-size: 0.85rem;
+  color: var(--green-text);
 }

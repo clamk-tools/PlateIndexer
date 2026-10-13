@@ -7,7 +7,7 @@ export function FormatPicker({ wells, onChange }: { wells: number; onChange: (we
       <span className="cap" id="format-label">
         Plate
       </span>
-      <div className="segmented" role="radiogroup" aria-labelledby="format-label">
+      <div className="segmented mono" role="radiogroup" aria-labelledby="format-label">
         {FORMATS.map((f) => (
           <button
             key={f.wells}

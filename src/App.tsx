@@ -13,6 +13,7 @@ import { currentLayer, hasData, initialState, lostOnFormat } from "./state/plate
 import { wellColors } from "./ui/colors";
 import type { EntryHandle } from "./ui/EntryBar";
 import { EntryBar } from "./ui/EntryBar";
+import { ExportPanel } from "./ui/ExportPanel";
 import { FormatPicker } from "./ui/FormatPicker";
 import { LayerBar } from "./ui/LayerBar";
 import { Legend } from "./ui/Legend";
@@ -208,6 +209,7 @@ export function App() {
           </div>
           <Legend layer={layer} selected={indexes.length} dispatch={dispatch} onApply={(cell) => fill(cell)} onHighlight={setLit} />
         </div>
+        <ExportPanel plate={plate} />
       </main>
 
       <footer className="wrap foot">

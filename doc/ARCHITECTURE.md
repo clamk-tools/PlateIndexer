@@ -24,6 +24,8 @@ and hold no rule of their own, so the rules are tested once, without a browser.
  state/plate.ts        the plate: format and layers (name, kind, unit, value list with colours, one cell per
                        well); reduce(state, action) for every change; the legend of a layer
  state/history.ts      undo and redo around reduce(): each change keeps the state before it
+ state/export.ts       the plate as a table (one row per well, chosen order and names, a column per text layer,
+                       value and unit columns per number layer); CSV and tab-separated text
  ui/colors.ts          the colour of each value: categorical palette for text, sequential scale for numbers
  ui/FormatPicker.tsx   the plate format, as a segmented control
  ui/LayerBar.tsx       the layers as tabs, adding one, the current layer's name, kind, unit, order, removal
@@ -31,6 +33,7 @@ and hold no rule of their own, so the rules are tested once, without a browser.
  ui/PlateGrid.tsx      the plate: column numbers, row letters, one cell per well, coloured by value; turns clicks,
                        drags and keys into selection calls, and hands typing to the entry bar
  ui/Legend.tsx         the current layer's values: paint with one, light its wells, rename, remove, add
+ ui/ExportPanel.tsx    the export choices, a preview, the CSV download and "Copy table"
  ui/ThemeSwitch.tsx    the family's light/dark switch (ui/theme.ts: shared with the hub and the other tools)
  App.tsx               the frame (rail, header, footer) around the plate
  styles/               theme.css: tokens and controls (shared with the other tools); app.css: frame;
@@ -53,6 +56,9 @@ A layer imports only from the layers above it. No rule about wells lives in a co
   is none. A text box keeps its own undo while it has the focus.
 - **The clipboard** carries tab-separated text, the format spreadsheets use, so a block copied here pastes into
   Excel and back. A copy made here is also kept typed (numbers stay numbers) for pasting within the page.
+- **The CSV** starts with a byte-order mark (so Excel reads "µ") and ends lines with CRLF; fields holding the
+  separator, a quote or a line break are quoted. "Semicolon" also writes decimal commas, as Excel in French expects.
+  Numbers keep up to 12 significant digits.
 - **Inside the tool, wells are kept row by row** (`wellIndex()`). The order chosen for the export is applied only
   when the list is written (`wellsInOrder()`).
 - **Look:** follow `doc/LLM feed for visual/LLMfeed_VISUAL-IDENTITY.md`. Colours come from the tokens in

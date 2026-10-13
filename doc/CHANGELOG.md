@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.5.0
+
+- Export: one row per well (well, row letter, column number), a column per text layer, a value and a unit column per
+  number layer. Choose the order (down columns or across rows), the names (A01 or A1), all wells or only those with
+  a value, and the separator (comma; semicolon with decimal comma, for Excel in French and other European settings;
+  tab). A preview shows the first rows.
+- Download the CSV (it opens in Excel with "µ" intact), or copy the table to paste into a spreadsheet.
+
 ## 0.4.0
 
 - Undo and redo (Ctrl/Cmd+Z, Ctrl/Cmd+Y or Ctrl/Cmd+Shift+Z, and buttons) for every change to the plate.
